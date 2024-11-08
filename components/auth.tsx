@@ -46,7 +46,7 @@ const Auth = ({ type }: { type: "signup" | "signin" }) => {
   };
 
   return (
-    <div className="flex flex-col h-full md:h-4/5 w-full md:w-2/5 justify-center border-2    rounded-md items-center bg-white ">
+    <div className="flex flex-col h-full md:h-4/5 w-full md:w-2/5 justify-center border-2  text-blue-700  rounded-md items-center bg-white ">
       <div className="flex flex-col justify-center mb-10 items-center text-center">
         <div
           className="font-thin text-3xl md:text-5xl"
@@ -64,7 +64,7 @@ const Auth = ({ type }: { type: "signup" | "signin" }) => {
         <LabelledInput
           label="USERNAME"
           type="text"
-          placeholder="LizDoesBiz"
+          placeholder=""
           value={inputs.username}
           onChange={handleInputChange}
         />
@@ -72,7 +72,7 @@ const Auth = ({ type }: { type: "signup" | "signin" }) => {
           <LabelledInput
             label="EMAIL"
             type="email"
-            placeholder="xyz@gmail.com"
+            placeholder=""
             value={inputs.email ?? ""}
             onChange={handleInputChange}
           />
@@ -80,20 +80,20 @@ const Auth = ({ type }: { type: "signup" | "signin" }) => {
         <LabelledInput
           label="PASSWORD"
           type="password"
-          placeholder="password"
+          placeholder=""
           value={inputs.password}
           onChange={handleInputChange}
         />
         <Button
           onClick={submitData}
-          className="bg-black w-full md:w-4/5 justify-center hover:bg-zinc-700 text-white py-2 md:py-3"
+          className="bg-blue-900 w-full md:w-4/5 justify-center hover:bg-blue-300 text-white py-2 md:py-3"
         >
           {type === "signin" ? "SIGN IN" : "SIGN UP"}
         </Button>
         <div className="flex flex-col w-full justify-center items-center text-zinc-600 mt-4 md:mt-8">
           {type === "signin" ? "Don't Have An Account?" : "Already Have An Account?"}
           <span>
-            <Link className="text-black font-semibold hover:text-xl" href={type === "signin" ? "/signup" : "/signin"}>
+            <Link className="text-blue-700 font-semibold hover:text-xl" href={type === "signin" ? "/signup" : "/signin"}>
               {type === "signin" ? "SignUp" : "SignIn"}
             </Link>
           </span>
