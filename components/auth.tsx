@@ -8,8 +8,8 @@ import { Button } from "./ui/button";
 import AxiosInstance from "@/utils/axios";
 
 interface UserInputs {
-  email?: string;
-  username: string;
+  email: string;
+  username?: string;
   password: string;
 }
 
@@ -62,16 +62,16 @@ const Auth = ({ type }: { type: "signup" | "signin" }) => {
 
       <div className="w-full md:w-3/4 flex flex-col justify-around items-center space-y-4 md:space-y-8">
         <LabelledInput
-          label="USERNAME"
-          type="text"
+          label="EMAIL"
+          type="email"
           placeholder=""
-          value={inputs.username}
+          value={inputs.email}
           onChange={handleInputChange}
         />
         {type === "signup" && (
           <LabelledInput
-            label="EMAIL"
-            type="email"
+            label="USERNAME"
+            type="text"
             placeholder=""
             value={inputs.email ?? ""}
             onChange={handleInputChange}

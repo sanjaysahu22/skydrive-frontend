@@ -3,10 +3,10 @@ import Link from "next/link";
 interface FileCardProps {
   fileName: string;
   thumbnail?: string;
-  id:Number
+  id:string
 }
 
-export function FileCard({ fileName, thumbnail = "/img1.jpeg" , id }: FileCardProps) {
+export function FileCard({ fileName, id }: FileCardProps) {
   return (
     <Link href={`/file/${id}`} passHref>
     <div className="bg-black-100 rounded-lg overflow-hidden shadow-xl hover:shadow-2xl hover:shadow-blue-200 hover:scale-105 transition-all duration-200 " >
