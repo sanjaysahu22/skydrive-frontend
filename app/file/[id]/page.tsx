@@ -77,7 +77,7 @@ export default function FileDetailPage() {
   const getFileDetails = async (id: string) => {
     try {
       const token = document.cookie.split("=")[1];
-      const response = await AxiosInstance.get(`/files/${id}`, {
+      const response = await AxiosInstance.get(`/files/${id}/preview `, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
@@ -97,7 +97,7 @@ export default function FileDetailPage() {
   const deleteFile= async (id: string) => {
     try {
       const token = document.cookie.split("=")[1];
-      const response = await AxiosInstance.get(`/files/${id}`, {
+      const response = await AxiosInstance.delete(`/files/${id}`, {
         headers: {
           Authorization: `Bearer ${token}`,
         },

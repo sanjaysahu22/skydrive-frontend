@@ -35,7 +35,7 @@ const Auth = ({ type }: { type: "signup" | "signin" }) => {
 
   const submitData = async () => {
     try {
-      const response = await AxiosInstance.post(`/user/${type}`, inputs, { withCredentials: true });
+      const response = await AxiosInstance.post(`/auth/${type}`, inputs, { withCredentials: true });
       const token = response.headers["authorization"];
       document.cookie = `accessToken=${token}; path=/; max-age=3600`;
       router.push("/home");

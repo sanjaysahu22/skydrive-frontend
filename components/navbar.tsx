@@ -10,10 +10,16 @@ import {
 import AxiosInstance from "@/utils/axios";
 
 
-interface NavbarProps {
-  handleFilter?: (filter: string) => void;
+interface FileType {
+  fileid: string;
+  filename: string;
+  previewImage: string;
 }
 
+interface NavbarProps {
+  handleFilter?: (filter: string) => void;
+  onSearchResults?: (results: FileType[]) => void;
+}
 const uploadFile = async (file: File) => {
   try {
     const formData = new FormData();
@@ -42,7 +48,7 @@ const uploadFile = async (file: File) => {
   }
 };
 
-export function Navbar({ handleFilter }: NavbarProps) {
+export function Navbar({ handleFilter, onSearchResults }: NavbarProps) {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [searchQuery, setSearchQuery] = useState("");
 
@@ -60,19 +66,22 @@ export function Navbar({ handleFilter }: NavbarProps) {
   const handleSearch = async () => {
     try {
       const token = document.cookie.split("=")[1];
-      const response = await AxiosInstance.post(`/files/search`,{query:{searchQuery}} , {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
+      const response = await AxiosInstance.post(
+        `/files/search`,
+        { query: { searchQuery } },
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
       if (response.status === 200) {
-        
+        onSearchResults?.(response.data.files);
       }
     } catch (error) {
       console.error("Error performing search:", error);
     }
   };
-
   return (
     <nav className="flex items-center border-2 justify-between px-4 py-2">
       <div className="flex items-center">
