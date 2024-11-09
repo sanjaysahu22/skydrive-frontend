@@ -6,20 +6,20 @@ import AxiosInstance from "@/utils/axios";
 import { useState, useEffect } from "react";
 import { useRouter, usePathname } from 'next/navigation';
 
+
 interface fileType {
   fileid: string;
   filename: string;
   previewImage: string;
 }
+interface filearray {
+  files: fileType[];
+}
 
-const filesDummy = [
-  { fileid: '1', filename: "Image 1", previewImage: "/placeholder.svg?height=200&width=200" },
-  { fileid: '2', filename: "Image 2", previewImage: "/placeholder.svg?height=200&width=200" },
-  { fileid: '3', filename: "Image 3", previewImage: "/placeholder.svg?height=200&width=200" },
-];
+
 
 export default function Page() {
-  const [files, setFiles] = useState<Array<fileType>>(filesDummy);
+  const [files, setFiles] = useState<fileType[]>([]);
   const [filter, setFilter] = useState<string>("shared"); 
   const [isSearching, setIsSearching] = useState(false);
   const router = useRouter();
@@ -27,23 +27,24 @@ export default function Page() {
 
   const getFiles = async (filter: string) => {
     try {
-      let token = document.cookie.split('=')[1];
-      const response = await AxiosInstance.post('/files', { filter } ,{
+      const token = document.cookie.split('=')[1];
+      const response = await AxiosInstance.post('/files', { filter }, {
         headers: {
           Authorization: `Bearer ${token}`,
-        },
-      });
+        },withCredentials:true
+      }, );
       if (response.status === 200) {
-        const { files } = response.data;
+        const { files } = response.data as filearray;
         console.log("Files retrieved successfully:", files);
         setFiles(files); 
         setIsSearching(false);
       }
-    } catch (error: any) {
+    } catch (error:any) {
+     
       if (error.response?.status === 401) {
         router.push("/signin");
       } else {
-        console.log("Error retrieving files:", error);
+        console.error("Error retrieving files:", error);
       }
     }
   };
@@ -56,11 +57,14 @@ export default function Page() {
 
   const handleFilterChange = (newFilter: string) => {
     setFilter(newFilter); 
+    setIsSearching(false);
   };
+
   const handleSearchResults = (searchResults: fileType[]) => {
     setFiles(searchResults);
     setIsSearching(true);
   };
+
   return (
     <div className="min-h-screen bg-white">
       <Navbar 
