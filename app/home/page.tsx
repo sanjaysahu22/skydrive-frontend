@@ -1,5 +1,4 @@
 'use client';
-
 import { Navbar } from "@/components/navbar";
 import { FileCard } from "@/components/filecard";
 import AxiosInstance from "@/utils/axios";
@@ -9,7 +8,7 @@ import { FileType, FileArrayResponse } from "@/types";
 
 export default function HomePage() {
   const [files, setFiles] = useState<FileType[]>([]);
-  const [filter, setFilter] = useState<"shared" | "private">("shared");
+  const [filter, setFilter] = useState<"shared" | "private">("private");
   const [isSearching, setIsSearching] = useState<boolean>(false);
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const router = useRouter();

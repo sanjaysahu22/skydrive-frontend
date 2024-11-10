@@ -1,17 +1,17 @@
+'use client'
 import { ChangeEvent, useState, FormEvent } from "react";
-import { useRouter } from 'next/navigation';
 import Link from "next/link";
 import { Button } from "./ui/button";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import AxiosInstance from "@/utils/axios";
 import { AxiosError, AxiosResponse } from "axios";
+import { useRouter } from "next/navigation";
 
 interface UserInputs {
   email: string;
   username?: string;
   password: string;
 }
-
 interface LabelledInputProps {
   type: 'text' | 'email' | 'password';
   label: string;
@@ -21,12 +21,10 @@ interface LabelledInputProps {
   name: string;
   error?: string;
 }
-
 interface AuthResponse {
   token: string;
   message: string;
 }
-
 interface ErrorState {
   email?: string;
   username?: string;
@@ -48,6 +46,7 @@ const Auth = ({ type }: { type: "signup" | "signin" }) => {
   });
   const [errors, setErrors] = useState<ErrorState>({});
   const [isLoading, setIsLoading] = useState(false);
+  const [successMessage, setSuccessMessage] = useState<string | null>(null); // State for success message
 
   const handleInputChange = (e: ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -60,7 +59,6 @@ const Auth = ({ type }: { type: "signup" | "signin" }) => {
     const errorMessage = error.response?.data?.message || '';
     const validationErrors = error.response?.data?.errors;
 
-    // Handle validation errors if they exist
     if (validationErrors) {
       const newErrors: ErrorState = {};
       Object.entries(validationErrors).forEach(([field, messages]) => {
@@ -117,20 +115,33 @@ const Auth = ({ type }: { type: "signup" | "signin" }) => {
     e.preventDefault();
     setIsLoading(true);
     setErrors({});
-
+    setSuccessMessage(null); 
+    const email = inputs.email;
+    const password = inputs.password;
+    let input2 = {};
+    if( type === "signin"){
+      input2 = {email ,password};
+    }
     try {
       const response: AxiosResponse<AuthResponse> = await AxiosInstance.post(
-        `/auth/${type=='signin'?"login":"signup"}`,
-        inputs,
+        `/auth/${type == 'signin' ? "login" : "signup"}`,
+        type === 'signin'?input2:inputs,
         { withCredentials: true }
       );
+      if (type === "signin"){const token = response.data.token;
+        if (token) {
+          document.cookie = `accessToken=${token}; path=/; max-age=3600; secure; samesite=strict`;
+          
+        } else {
+          throw new Error("No authorization token received");
+        }}
       
-      const token =  response.data.token;
-      if (token) {
-        document.cookie = `accessToken=${token}; path=/; max-age=3600; secure; samesite=strict`;
-        router.push("/home");
-      } else {
-        throw new Error("No authorization token received");
+      if (type === 'signup') {
+        setSuccessMessage("Account created successfully! Please check your email to confirm your account.");
+      }
+      if (type === 'signin')
+      {
+        router.push('/home');
       }
     } catch (error) {
       if (error instanceof AxiosError) {
@@ -167,6 +178,12 @@ const Auth = ({ type }: { type: "signup" | "signin" }) => {
       {errors.general && (
         <Alert variant="destructive" className="mb-4">
           <AlertDescription>{errors.general}</AlertDescription>
+        </Alert>
+      )}
+
+      {successMessage && (
+        <Alert  className="mb-4">
+          <AlertDescription>{successMessage}</AlertDescription>
         </Alert>
       )}
 
@@ -252,9 +269,7 @@ const LabelledInput = ({
                    : 'border-gray-300 focus:border-blue-500 focus:ring-1 focus:ring-blue-500'
                  }`}
     />
-    {error && (
-      <p className="text-red-500 text-sm mt-1">{error}</p>
-    )}
+    {error && <p className="text-xs sm:text-sm text-red-500">{error}</p>}
   </div>
 );
 

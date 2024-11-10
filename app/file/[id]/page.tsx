@@ -1,5 +1,4 @@
-"use client";
-
+"use client"
 import { usePathname, useRouter } from "next/navigation";
 import { useState, useEffect } from "react";
 import { Navbar } from "@/components/navbar";
@@ -21,10 +20,9 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { Delete, Share, Trash, AlertCircle, Download } from "lucide-react";
+import { Share, Trash, AlertCircle, Download } from "lucide-react";
 import AxiosInstance from "@/utils/axios";
 import { AxiosError } from 'axios';
-import { FileType } from "@/types";
 import { format } from 'date-fns';
 
 

@@ -1,3 +1,4 @@
+'use client'
 import {  Cloud, Menu, Search} from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useRef, useState } from "react";
@@ -33,7 +34,8 @@ const uploadFile = async (file: File): Promise<UploadResponse | undefined> => {
       },  withCredentials: true
     });
     
-    if (response.status === 201) {
+    if (response.status === 200) {
+      window.location.reload();
       return response.data;
     }
   } catch (error) {
@@ -151,10 +153,10 @@ export function Navbar({ handleFilter, onSearchResults }: NavbarProps) {
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end" className="w-48">
               <DropdownMenuItem onClick={() => handleFilter("shared")} className="cursor-pointer">
-                Shared Files
+                Files Shared With You
               </DropdownMenuItem>
               <DropdownMenuItem onClick={() => handleFilter("private")} className="cursor-pointer">
-                Private Files
+              Your Files
               </DropdownMenuItem>
               <DropdownMenuItem 
                 onClick={handleUploadClick} 
