@@ -1,7 +1,7 @@
 'use client '
 import Link from 'next/link';
 import { Button } from "@/components/ui/button";
-import { Home, ArrowLeft } from "lucide-react";
+import { Home } from "lucide-react";
 
 const NotFound = () => {
   return (
@@ -18,11 +18,11 @@ const NotFound = () => {
         {/* Error Message */}
         <div className="space-y-4 mt-8">
           <h2 className="text-3xl font-semibold text-gray-800">
-            Looks like you're lost
+            Looks like you&apos;re lost
           </h2>
           <p className="text-gray-600 max-w-md mx-auto">
-            The page you're looking for doesn't exist or has been moved. 
-            Don't worry, you can find your way back home.
+            The page you are looking for does not exist or has been moved. 
+            Do not worry you can find your way back home.
           </p>
         </div>
 
