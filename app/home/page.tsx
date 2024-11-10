@@ -4,48 +4,47 @@ import { Navbar } from "@/components/navbar";
 import { FileCard } from "@/components/filecard";
 import AxiosInstance from "@/utils/axios";
 import { useState, useEffect } from "react";
-import { useRouter, usePathname } from 'next/navigation';
+import { useRouter } from 'next/navigation';
+import { FileType, FileArrayResponse } from "@/types";
 
-
-interface fileType {
-  fileid: string;
-  filename: string;
-  previewImage: string;
-}
-interface filearray {
-  files: fileType[];
-}
-
-
-
-export default function Page() {
-  const [files, setFiles] = useState<fileType[]>([]);
-  const [filter, setFilter] = useState<string>("shared"); 
-  const [isSearching, setIsSearching] = useState(false);
+export default function HomePage() {
+  const [files, setFiles] = useState<FileType[]>([]);
+  const [filter, setFilter] = useState<"shared" | "private">("shared");
+  const [isSearching, setIsSearching] = useState<boolean>(false);
+  const [isLoading, setIsLoading] = useState<boolean>(true);
   const router = useRouter();
-  const pathname = usePathname(); 
 
-  const getFiles = async (filter: string) => {
+  const getFiles = async (filter: "shared" | "private") => {
+    setIsLoading(true);
     try {
       const token = document.cookie.split('=')[1];
-      const response = await AxiosInstance.post('/files', { filter }, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },withCredentials:true
-      }, );
-      if (response.status === 200) {
-        const { files } = response.data as filearray;
-        console.log("Files retrieved successfully:", files);
-        setFiles(files); 
-        setIsSearching(false);
-      }
-    } catch (error:any) {
-     
-      if (error.response?.status === 401) {
+      if (!token) {
         router.push("/signin");
-      } else {
-        console.error("Error retrieving files:", error);
+        return;
       }
+
+      const response = await AxiosInstance.post<FileArrayResponse>(
+        '/files/', 
+        { filter }, 
+        {
+          headers: { Authorization: `Bearer ${token}` },
+          withCredentials: true
+        }
+      );
+
+      setFiles(response.data.files);
+      setIsSearching(false);
+    } catch (error) {
+      if (error instanceof Error) {
+        const axiosError = error as { response?: { status: number } };
+        if (axiosError.response?.status === 401) {
+          router.push("/signin");
+        } else {
+          console.error("Error retrieving files:", error.message);
+        }
+      }
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -55,38 +54,47 @@ export default function Page() {
     }
   }, [filter, isSearching]);
 
-  const handleFilterChange = (newFilter: string) => {
-    setFilter(newFilter); 
+  const handleFilterChange = (newFilter: "shared" | "private") => {
+    setFilter(newFilter);
     setIsSearching(false);
   };
 
-  const handleSearchResults = (searchResults: fileType[]) => {
+  const handleSearchResults = (searchResults: FileType[]) => {
     setFiles(searchResults);
     setIsSearching(true);
   };
 
   return (
-    <div className="min-h-screen bg-white">
-      <Navbar 
-        handleFilter={pathname === "/home" ? handleFilterChange : undefined}
+    <div className="min-h-screen bg-gray-50">
+      <Navbar
+        handleFilter={handleFilterChange}
         onSearchResults={handleSearchResults}
       />
-      <main className="container mx-auto p-4">
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-          {files.map((file) => (
-            <FileCard
-              key={file.fileid}
-              id={file.fileid}
-              fileName={file.filename}
-              thumbnail={file.previewImage}
-            />
-          ))}
-          {files.length === 0 && (
-            <div className="col-span-full text-center py-8 text-gray-500">
-              No files found
-            </div>
-          )}
-        </div>
+      <main className="container mx-auto px-4 py-6 sm:py-8 md:py-10">
+        {isLoading ? (
+          <div className="flex justify-center items-center min-h-[200px]">
+            <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-500"></div>
+          </div>
+        ) : (
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 sm:gap-6">
+            {files.map((file) => (
+              <FileCard
+                key={file.fileId}
+                id={file.fileId}
+                fileName={file.fileName}
+                thumbnail={`data:image/png;base64,${file.previewImage}`}
+              />
+            ))}
+            {!isLoading && files.length === 0 && (
+              <div className="col-span-full text-center py-12">
+                <p className="text-gray-500 text-lg">No files found</p>
+                <p className="text-gray-400 text-sm mt-2">
+                  {isSearching ? "Try a different search term" : "Upload some files to get started"}
+                </p>
+              </div>
+            )}
+          </div>
+        )}
       </main>
     </div>
   );
