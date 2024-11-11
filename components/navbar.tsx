@@ -10,6 +10,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import AxiosInstance from "@/utils/axios";
 import { FileType } from "@/types";
+import Link from "next/link";
 
 interface NavbarProps {
   handleFilter: (filter: "shared" | "private") => void;
@@ -68,7 +69,6 @@ export function Navbar({ handleFilter, onSearchResults }: NavbarProps) {
       setIsUploading(true);
       try {
         await uploadFile(file);
-        // Refresh the file list after successful upload
         handleFilter("private");
       } catch (error) {
         if (error instanceof Error) {
@@ -111,7 +111,7 @@ export function Navbar({ handleFilter, onSearchResults }: NavbarProps) {
       <div className="flex items-center justify-between h-16 sm:h-20">
         
         {/* Logo */}
-        <div className="font-bold flex gap-1 text-xl text-blue-600"><Cloud size={30} />SkyDrive     </div>
+        <Link href='/home' className="font-bold flex gap-1 text-xl text-blue-600"><Cloud size={30} />SkyDrive     </Link>
   
         <div className="flex-1 mx-4">
           <div className="relative max-w-lg mx-auto">
